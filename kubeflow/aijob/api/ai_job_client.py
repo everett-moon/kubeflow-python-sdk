@@ -302,11 +302,12 @@ class AIJobClient(object):
     return aijob_status.lower() == "succeeded"
 
 
-  def get_pod_names(self, name, namespace=None, master=False, #pylint: disable=inconsistent-return-statements
+  def get_pod_names(self, name, kind, namespace=None, master=False,
                     replica_type=None, replica_index=None):
     """
     Get pod names of aijob.
     :param name: aijob name
+    :param kind: kind of current job.
     :param namespace: defaults to current or default namespace.
     :param master: Only get pod with label 'job-role: master' pod if True.
     :param replica_type: User can specify one of 'worker, ps, chief' to only get one type pods.
@@ -318,7 +319,7 @@ class AIJobClient(object):
     if namespace is None:
       namespace = utils.get_default_target_namespace()
 
-    labels = utils.get_labels(name, master=master,
+    labels = utils.get_labels(name, kind, master=master,
                               replica_type=replica_type,
                               replica_index=replica_index)
 
@@ -340,13 +341,14 @@ class AIJobClient(object):
       return set(pod_names)
 
 
-  def get_logs(self, name, namespace=None, master=True,
+  def get_logs(self, name, kind, namespace=None, master=True,
                replica_type=None, replica_index=None,
                follow=False):
     """
     Get training logs of the aijob.
     By default only get the logs of Pod that has labels 'job-role: master'.
     :param name: aijob name
+    :param kind: kind of current job.
     :param namespace: defaults to current or default namespace.
     :param master: By default get pod with label 'job-role: master' pod if True.
                    If need to get more Pod Logs, set False.
@@ -360,7 +362,7 @@ class AIJobClient(object):
     if namespace is None:
       namespace = utils.get_default_target_namespace()
 
-    pod_names = self.get_pod_names(name, namespace=namespace,
+    pod_names = self.get_pod_names(name, kind, namespace=namespace,
                                    master=master,
                                    replica_type=replica_type,
                                    replica_index=replica_index)

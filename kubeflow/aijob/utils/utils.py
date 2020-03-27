@@ -17,7 +17,7 @@ def get_default_target_namespace():
   return get_current_k8s_namespace()
 
 
-def set_deeplearnjob_namespace(job):
+def set_aijob_namespace(job):
   job_namespace = job.metadata.namespace
   namespace = job_namespace or get_default_target_namespace()
   return namespace
