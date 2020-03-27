@@ -36,17 +36,17 @@ def get_labels(kind, name, master=False, replica_type=None, replica_index=None):
   labels = {
     constants.AIJOB_GROUP_LABEL: 'kubeflow.org',
     constants.AIJOB_CONTROLLER_LABEL: constants.ai_operators[kind],
-    constants.AIJOB_NAME_LABEL[kind]: name,
+    constants.constants_attributed[kind]['NAME_LABEL']: name,
   }
 
   if master:
     labels[constants.AIJOB_ROLE_LABEL] = 'master'
 
   if replica_type:
-    labels[constants.AIJOB_TYPE_LABEL[kind]] = str.lower(replica_type)
+    labels[constants.constants_attributed[kind]['TYPE_LABEL']] = str.lower(replica_type)
 
   if replica_index:
-    labels[constants.AIJOB_INDEX_LABEL[kind]] = replica_index
+    labels[constants.constants_attributed[kind]['INDEX_LABEL']] = replica_index
 
   return labels
 
