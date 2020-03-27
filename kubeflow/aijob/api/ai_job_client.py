@@ -53,7 +53,7 @@ class AIJobClient(object):
         constants.AIJOB_GROUP,
         constants.AIJOB_VERSION,
         namespace,
-        constants.constants_attributed[kind]['AIJOB_PLURAL'],
+        constants.constants_attributed[kind]['JOB_PLURAL'],
         aijob)
     except client.rest.ApiException as e:
       raise RuntimeError(
@@ -87,7 +87,7 @@ class AIJobClient(object):
           constants.AIJOB_GROUP,
           constants.AIJOB_VERSION,
           namespace,
-          constants.constants_attributed[kind]['AIJOB_PLURAL'],
+          constants.constants_attributed[kind]['JOB_PLURAL'],
           name,
           async_req=True)
 
@@ -115,7 +115,7 @@ class AIJobClient(object):
           constants.AIJOB_GROUP,
           constants.AIJOB_VERSION,
           namespace,
-          constants.constants_attributed[kind]['AIJOB_PLURAL'],
+          constants.constants_attributed[kind]['JOB_PLURAL'],
           async_req=True)
 
         aijobs = None
@@ -151,7 +151,7 @@ class AIJobClient(object):
         constants.AIJOB_GROUP,
         constants.AIJOB_VERSION,
         namespace,
-        constants.constants_attributed[kind]['AIJOB_PLURAL'],
+        constants.constants_attributed[kind]['JOB_PLURAL'],
         name,
         aijob)
     except client.rest.ApiException as e:
@@ -177,7 +177,7 @@ class AIJobClient(object):
         constants.AIJOB_GROUP,
         constants.AIJOB_VERSION,
         namespace,
-        constants.constants_attributed[kind]['AIJOB_PLURAL'],
+        constants.constants_attributed[kind]['JOB_PLURAL'],
         name,
         client.V1DeleteOptions())
     except client.rest.ApiException as e:

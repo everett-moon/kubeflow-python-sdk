@@ -123,7 +123,7 @@ class V1AIJobSpec(object):
         self._clean_pod_policy = clean_pod_policy
 
     @property
-    def tf_replica_specs(self):
+    def ai_replica_specs(self):
         """Gets the tf_replica_specs of this V1AIJobSpec.  # noqa: E501
 
         A map of TFReplicaType (type) to ReplicaSpec (value). Specifies the TF cluster configuration. For example,   {     \"PS\": ReplicaSpec,     \"Worker\": ReplicaSpec,   }  # noqa: E501
@@ -131,10 +131,10 @@ class V1AIJobSpec(object):
         :return: The tf_replica_specs of this V1AIJobSpec.  # noqa: E501
         :rtype: dict(str, V1ReplicaSpec)
         """
-        return self._tf_replica_specs
+        return self._ai_replica_specs
 
-    @tf_replica_specs.setter
-    def tf_replica_specs(self, tf_replica_specs):
+    @ai_replica_specs.setter
+    def ai_replica_specs(self, ai_replica_specs):
         """Sets the tf_replica_specs of this V1AIJobSpec.
 
         A map of TFReplicaType (type) to ReplicaSpec (value). Specifies the TF cluster configuration. For example,   {     \"PS\": ReplicaSpec,     \"Worker\": ReplicaSpec,   }  # noqa: E501
@@ -142,10 +142,10 @@ class V1AIJobSpec(object):
         :param tf_replica_specs: The tf_replica_specs of this V1AIJobSpec.  # noqa: E501
         :type: dict(str, V1ReplicaSpec)
         """
-        if tf_replica_specs is None:
-            raise ValueError("Invalid value for `tf_replica_specs`, must not be `None`")  # noqa: E501
+        if ai_replica_specs is None:
+            raise ValueError("Invalid value for `ai_replica_specs`, must not be `None`")  # noqa: E501
 
-        self._tf_replica_specs = tf_replica_specs
+        self._ai_replica_specs = ai_replica_specs
 
     @property
     def ttl_seconds_after_finished(self):
