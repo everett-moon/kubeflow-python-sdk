@@ -153,7 +153,7 @@ class V1AIJobSpec(object):
 
     @property
     def pytorch_replica_specs(self):
-        return self._tf_replica_specs
+        return self._pytorch_replica_specs
 
     @pytorch_replica_specs.setter
     def pytorch_replica_specs(self, pytorch_replica_specs):
