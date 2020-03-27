@@ -36,9 +36,10 @@ class AIJobClient(object):
     self.core_api = client.CoreV1Api()
 
 
-  def create(self, aijob, namespace=None):
+  def create(self, kind, aijob, namespace=None):
     """
     Create the AIJob
+    :param kind: kind of this aijob
     :param aijob: aijob object
     :param namespace: defaults to current or default namespace
     :return: created aijob
@@ -52,7 +53,7 @@ class AIJobClient(object):
         constants.AIJOB_GROUP,
         constants.AIJOB_VERSION,
         namespace,
-        constants.AIJOB_PLURAL,
+        constants.constants_attributed[kind]['AIJOB_PLURAL'],
         aijob)
     except client.rest.ApiException as e:
       raise RuntimeError(
@@ -61,9 +62,10 @@ class AIJobClient(object):
 
     return outputs
 
-  def get(self, name=None, namespace=None, watch=False, timeout_seconds=600):
+  def get(self, kind, name=None, namespace=None, watch=False, timeout_seconds=600):
     """
     Get the aijob
+    :param kind: kind of this aijob
     :param name: existing aijob name, if not defined, the get all aijobs in the namespace.
     :param namespace: defaults to current or default namespace
     :param watch: Watch the AIJob if `True`.
@@ -76,6 +78,7 @@ class AIJobClient(object):
     if name:
       if watch:
         aijob_watch(
+          kind,
           name=name,
           namespace=namespace,
           timeout_seconds=timeout_seconds)
@@ -84,7 +87,7 @@ class AIJobClient(object):
           constants.AIJOB_GROUP,
           constants.AIJOB_VERSION,
           namespace,
-          constants.AIJOB_PLURAL,
+          constants.constants_attributed[kind]['AIJOB_PLURAL'],
           name,
           async_req=True)
 
@@ -104,7 +107,7 @@ class AIJobClient(object):
         return aijob
     else:
       if watch:
-        aijob_watch(
+        aijob_watch(kind,
             namespace=namespace,
             timeout_seconds=timeout_seconds)
       else:
@@ -112,7 +115,7 @@ class AIJobClient(object):
           constants.AIJOB_GROUP,
           constants.AIJOB_VERSION,
           namespace,
-          constants.AIJOB_PLURAL,
+          constants.constants_attributed[kind]['AIJOB_PLURAL'],
           async_req=True)
 
         aijobs = None
@@ -131,9 +134,10 @@ class AIJobClient(object):
         return aijobs
 
 
-  def patch(self, name, aijob, namespace=None):
+  def patch(self, kind, name, aijob, namespace=None):
     """
     Patch existing aijob
+    :param kind: kind of this aijob
     :param name: existing aijob name
     :param aijob: patched aijob
     :param namespace: defaults to current or default namespace
@@ -147,7 +151,7 @@ class AIJobClient(object):
         constants.AIJOB_GROUP,
         constants.AIJOB_VERSION,
         namespace,
-        constants.AIJOB_PLURAL,
+        constants.constants_attributed[kind]['AIJOB_PLURAL'],
         name,
         aijob)
     except client.rest.ApiException as e:
@@ -158,7 +162,7 @@ class AIJobClient(object):
     return outputs
 
 
-  def delete(self, name, namespace=None):
+  def delete(self, kind, name, namespace=None):
     """
     Delete the aijob
     :param name: aijob name
@@ -173,7 +177,7 @@ class AIJobClient(object):
         constants.AIJOB_GROUP,
         constants.AIJOB_VERSION,
         namespace,
-        constants.AIJOB_PLURAL,
+        constants.constants_attributed[kind]['AIJOB_PLURAL'],
         name,
         client.V1DeleteOptions())
     except client.rest.ApiException as e:
@@ -182,7 +186,7 @@ class AIJobClient(object):
          %s\n" % e)
 
 
-  def wait_for_job(self, name, #pylint: disable=inconsistent-return-statements
+  def wait_for_job(self, kind, name,
                    namespace=None,
                    timeout_seconds=600,
                    polling_interval=30,
@@ -190,6 +194,7 @@ class AIJobClient(object):
                    status_callback=None):
     """Wait for the specified job to finish.
 
+    :param name: Kind of the aijob.
     :param name: Name of the aijob.
     :param namespace: defaults to current or default namespace.
     :param timeout_seconds: How long to wait for the job.
@@ -205,11 +210,13 @@ class AIJobClient(object):
 
     if watch:
       aijob_watch(
+        kind,
         name=name,
         namespace=namespace,
         timeout_seconds=timeout_seconds)
     else:
       return self.wait_for_condition(
+        kind,
         name,
         ["Succeeded", "Failed"],
         namespace=namespace,
@@ -218,7 +225,7 @@ class AIJobClient(object):
         status_callback=status_callback)
 
 
-  def wait_for_condition(self, name,
+  def wait_for_condition(self, kind, name,
                          expected_condition,
                          namespace=None,
                          timeout_seconds=600,
@@ -226,6 +233,7 @@ class AIJobClient(object):
                          status_callback=None):
     """Waits until any of the specified conditions occur.
 
+    :param kind: Kind of the job.
     :param name: Name of the job.
     :param expected_condition: A list of conditions. Function waits until any of the
            supplied conditions is reached.
@@ -244,7 +252,7 @@ class AIJobClient(object):
     for _ in range(round(timeout_seconds/polling_interval)):
 
       aijob = None
-      aijob = self.get(name, namespace=namespace)
+      aijob = self.get(kind, name, namespace=namespace)
 
       if aijob:
         if status_callback:
@@ -265,9 +273,10 @@ class AIJobClient(object):
       "conditions {2}.".format(name, namespace, expected_condition), aijob)
 
 
-  def get_job_status(self, name, namespace=None):
+  def get_job_status(self, kind, name, namespace=None):
     """Returns aijob status, such as Running, Failed or Succeeded.
 
+    :param kind: The aijob name.
     :param name: The aijob name.
     :param namespace: defaults to current or default namespace.
     :return: Object aijob status
@@ -275,39 +284,42 @@ class AIJobClient(object):
     if namespace is None:
       namespace = utils.get_default_target_namespace()
 
-    aijob = self.get(name, namespace=namespace)
+    aijob = self.get(kind, name, namespace=namespace)
     last_condition = aijob.get("status", {}).get("conditions", [])[-1]
     return last_condition.get("type", "")
 
 
-  def is_job_running(self, name, namespace=None):
+  def is_job_running(self, kind, name, namespace=None):
     """Returns true if the aijob running; false otherwise.
 
+    :param kind: Kind of aijob.
     :param name: The aijob name.
     :param namespace: defaults to current or default namespace.
     :return: True or False
     """
-    aijob_status = self.get_job_status(name, namespace=namespace)
+    aijob_status = self.get_job_status(kind, name, namespace=namespace)
     return aijob_status.lower() == "running"
 
 
-  def is_job_succeeded(self, name, namespace=None):
+  def is_job_succeeded(self, kind, name, namespace=None):
     """Returns true if the aijob succeeded; false otherwise.
 
+    :param kind: Kind of aijob.
     :param name: The aijob name.
     :param namespace: defaults to current or default namespace.
     :return: True or False
     """
-    aijob_status = self.get_job_status(name, namespace=namespace)
+    aijob_status = self.get_job_status(kind, name, namespace=namespace)
     return aijob_status.lower() == "succeeded"
 
 
-  def get_pod_names(self, name, kind, namespace=None, master=False,
+  def get_pod_names(self, kind, name, namespace=None, master=False,
                     replica_type=None, replica_index=None):
     """
     Get pod names of aijob.
-    :param name: aijob name
+
     :param kind: kind of current job.
+    :param name: aijob name
     :param namespace: defaults to current or default namespace.
     :param master: Only get pod with label 'job-role: master' pod if True.
     :param replica_type: User can specify one of 'worker, ps, chief' to only get one type pods.
@@ -319,7 +331,7 @@ class AIJobClient(object):
     if namespace is None:
       namespace = utils.get_default_target_namespace()
 
-    labels = utils.get_labels(name, kind, master=master,
+    labels = utils.get_labels(kind, name, master=master,
                               replica_type=replica_type,
                               replica_index=replica_index)
 
@@ -341,14 +353,15 @@ class AIJobClient(object):
       return set(pod_names)
 
 
-  def get_logs(self, name, kind, namespace=None, master=True,
+  def get_logs(self, kind, name, namespace=None, master=True,
                replica_type=None, replica_index=None,
                follow=False):
     """
     Get training logs of the aijob.
     By default only get the logs of Pod that has labels 'job-role: master'.
-    :param name: aijob name
+
     :param kind: kind of current job.
+    :param name: aijob name
     :param namespace: defaults to current or default namespace.
     :param master: By default get pod with label 'job-role: master' pod if True.
                    If need to get more Pod Logs, set False.
@@ -362,7 +375,7 @@ class AIJobClient(object):
     if namespace is None:
       namespace = utils.get_default_target_namespace()
 
-    pod_names = self.get_pod_names(name, kind, namespace=namespace,
+    pod_names = self.get_pod_names(kind, name, namespace=namespace,
                                    master=master,
                                    replica_type=replica_type,
                                    replica_index=replica_index)

@@ -12,7 +12,7 @@ tbl = TableLogger(
   border=False)
 
 @retrying.retry(wait_fixed=1000, stop_max_attempt_number=20)
-def watch(name=None, namespace=None, timeout_seconds=600):
+def watch(kind, name=None, namespace=None, timeout_seconds=600):
   """Watch the created or patched InferenceService in the specified namespace"""
 
   if namespace is None:
@@ -23,7 +23,7 @@ def watch(name=None, namespace=None, timeout_seconds=600):
     constants.AIJOB_GROUP,
     constants.AIJOB_VERSION,
     namespace,
-    constants.AIJOB_PLURAL,
+    constants.constants_attributed[kind]['JOB_PLURAL'],
     timeout_seconds=timeout_seconds)
 
   for event in stream:

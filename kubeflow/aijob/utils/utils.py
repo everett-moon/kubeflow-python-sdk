@@ -23,7 +23,7 @@ def set_aijob_namespace(job):
   return namespace
 
 
-def get_labels(name, kind, master=False, replica_type=None, replica_index=None):
+def get_labels(kind, name, master=False, replica_type=None, replica_index=None):
   """
   Get labels according to speficed flags.
   :param name: aijob name

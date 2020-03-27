@@ -2,8 +2,6 @@ import os
 
 # TFJob K8S constants
 AIJOB_GROUP = 'kubeflow.org'
-AIJOB_KIND = 'AIJob'
-AIJOB_PLURAL = 'aijobs'
 AIJOB_VERSION = os.environ.get('AIJOB_VERSION', 'v1')
 AIJOB_LOGLEVEL = os.environ.get('AIJOB_LOGLEVEL', 'INFO').upper()
 
@@ -15,24 +13,31 @@ AIJOB_CONTROLLER_LABEL = 'controller-name'
 AIJOB_GROUP_LABEL = 'group-name'
 AIJOB_ROLE_LABEL = 'job-role'
 
-AIJOB_TYPE_LABEL = {
-        'TFJob': 'tf-replica-type',
-        'PytorchJob': 'pytorch-replica-type',
-        'MXJob': 'mxnet-replica-type',
-        'MPIJob': 'mpi-replica-type'
-        }
-AIJOB_INDEX_LABEL = {
-        'TFJob': 'tf-replica-index',
-        'PytorchJob': 'pytorch-replica-index',
-        'MXJob': 'mxnet-replica-index',
-        'MPIJob': 'mpi-replica-index'
-        }
-
-AIJOB_NAME_LABEL = {
-        'TFJob': 'tf-job-name',
-        'PytorchJob': 'pytorch-job-name',
-        'MXJob': 'mxnet-job-name',
-        'MPIJob': 'mpi-job-name'
+constants_attributed = {
+        'TFJob': {
+            'JOB_PLURAL': 'tfjobs',
+            'NAME_LABEL': 'tf-job-name',
+            'TYPE_LABEL': 'tf-replica-type',
+            'INDEX_LABEL': 'tf-replica-index'
+            },
+        'PytorchJob': {
+            'JOB_PLURAL': 'pytorchjobs',
+            'NAME_LABEL': 'pytorch-job-name',
+            'TYPE_LABEL': 'pytorch-replica-type',
+            'INDEX_LABEL': 'pytorch-replica-index'
+            },
+        'MXJob': {
+            'JOB_PLURAL': 'mxnetjobs',
+            'NAME_LABEL': 'mxnet-job-name',
+            'TYPE_LABEL': 'mxnet-replica-type',
+            'INDEX_LABEL': 'mxnet-replica-index'
+            },
+        'MPIJob': {
+            'JOB_PLURAL': 'mpijobs',
+            'NAME_LABEL': 'mpi-job-name',
+            'TYPE_LABEL': 'mpi-replica-type',
+            'INDEX_LABEL': 'mpi-replica-index'
+            }
         }
 
 ai_operators = {
