@@ -25,6 +25,7 @@ class V1AIJobSpec(object):
         'clean_pod_policy': 'str',
         'tf_replica_specs': 'dict(str, V1ReplicaSpec)',
         'pytorch_replica_specs': 'dict(str, V1ReplicaSpec)',
+        'mxnet_replica_specs': 'dict(str, V1ReplicaSpec)',
         'ttl_seconds_after_finished': 'int'
     }
 
@@ -34,11 +35,14 @@ class V1AIJobSpec(object):
         'clean_pod_policy': 'cleanPodPolicy',
         'tf_replica_specs': 'tfReplicaSpecs',
         'pytorch_replica_specs': 'pytorchReplicaSpecs',
+        'mxnet_replica_specs': 'mxReplicaSpecs',
         'ttl_seconds_after_finished': 'ttlSecondsAfterFinished'
     }
 
-    def __init__(self, active_deadline_seconds=None, backoff_limit=None, clean_pod_policy=None, ttl_seconds_after_finished=None,
-            tf_replica_specs=None, pytorch_replica_specs=None):
+    def __init__(self, active_deadline_seconds=None, backoff_limit=None,
+            clean_pod_policy=None, ttl_seconds_after_finished=None,
+            tf_replica_specs=None, pytorch_replica_specs=None,
+            mxnet_replica_specs):
         self._active_deadline_seconds = None
         self._backoff_limit = None
         self._clean_pod_policy = None
@@ -52,8 +56,11 @@ class V1AIJobSpec(object):
             self.backoff_limit = backoff_limit
         if clean_pod_policy is not None:
             self.clean_pod_policy = clean_pod_policy
+        # @TODO: support Tensorflow, Pytorch, Mxnet, Hovarod
         self.tf_replica_specs = tf_replica_specs
         self.pytorch_replica_specs = pytorch_replica_specs
+        self.mxnet_replica_specs = mxnet_replica_specs
+
         if ttl_seconds_after_finished is not None:
             self.ttl_seconds_after_finished = ttl_seconds_after_finished
 
@@ -161,6 +168,14 @@ class V1AIJobSpec(object):
         #    raise ValueError("Invalid value for `pytorch_replica_specs`, must not be `None`")  # noqa: E501
 
         self._pytorch_replica_specs = pytorch_replica_specs
+
+    @property
+    def mxnet_replica_specs(self):
+        return self._mxnet_replica_specs
+
+    @mxnet_replica_specs.setter
+    def mxnet_replica_specs(self, mxnet_replica_specs):
+        self._mxnet_replica_specs = mxnet_replica_specs
 
     @property
     def ttl_seconds_after_finished(self):
