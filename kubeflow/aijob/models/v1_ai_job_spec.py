@@ -26,6 +26,7 @@ class V1AIJobSpec(object):
         'tf_replica_specs': 'dict(str, V1ReplicaSpec)',
         'pytorch_replica_specs': 'dict(str, V1ReplicaSpec)',
         'mxnet_replica_specs': 'dict(str, V1ReplicaSpec)',
+        'mpi_replica_specs': 'dict(str, V1ReplicaSpec)',
         'ttl_seconds_after_finished': 'int'
     }
 
@@ -36,13 +37,14 @@ class V1AIJobSpec(object):
         'tf_replica_specs': 'tfReplicaSpecs',
         'pytorch_replica_specs': 'pytorchReplicaSpecs',
         'mxnet_replica_specs': 'mxReplicaSpecs',
+        'mpi_replica_specs': 'mpiReplicaSpecs',
         'ttl_seconds_after_finished': 'ttlSecondsAfterFinished'
     }
 
     def __init__(self, active_deadline_seconds=None, backoff_limit=None,
             clean_pod_policy=None, ttl_seconds_after_finished=None,
             tf_replica_specs=None, pytorch_replica_specs=None,
-            mxnet_replica_specs):
+            mxnet_replica_specs=None, mpi_replica_specs=None):
         self._active_deadline_seconds = None
         self._backoff_limit = None
         self._clean_pod_policy = None
@@ -60,6 +62,7 @@ class V1AIJobSpec(object):
         self.tf_replica_specs = tf_replica_specs
         self.pytorch_replica_specs = pytorch_replica_specs
         self.mxnet_replica_specs = mxnet_replica_specs
+        self.mpi_replica_specs = mpi_replica_specs
 
         if ttl_seconds_after_finished is not None:
             self.ttl_seconds_after_finished = ttl_seconds_after_finished
@@ -176,6 +179,14 @@ class V1AIJobSpec(object):
     @mxnet_replica_specs.setter
     def mxnet_replica_specs(self, mxnet_replica_specs):
         self._mxnet_replica_specs = mxnet_replica_specs
+
+    @property
+    def mpi_replica_specs(self):
+        return self._mpi_replica_specs
+
+    @mpi_replica_specs.setter
+    def mpi_replica_specs(self, mpi_replica_specs):
+        self._mpi_replica_specs = mpi_replica_specs
 
     @property
     def ttl_seconds_after_finished(self):
